@@ -1,5 +1,5 @@
-Summary:	X.org server
-Summary(pl):	Serwer X.org
+Summary:	Xgl X server
+Summary(pl):	Serwer X Xgl
 Name:		xorg-xserver-xgl
 %define		_snap	20060220
 Version:	0.0.%{_snap}
@@ -83,9 +83,13 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Xorg server is a generally used X server which uses display hardware.
 It requires proper driver for your display hardware.
 
+This package contains Xgl server.
+
 %description -l pl
 Serwer Xorg to podstawowy serwer X wy¶wietlaj±cy obraz na karcie
 graficznej. Do dzia³ania wymaga odpowiedniego sterownika.
+
+Ten pakiet zawiera serwer Xgl.
 
 %prep
 %setup -q -a1 -n xserver-%{_snap}
