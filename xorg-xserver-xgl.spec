@@ -7,9 +7,9 @@ Release:	0.1
 License:	MIT
 Group:		X11/Servers
 Source0:	xserver-%{_snap}.tar.bz2
-# Source0-md5:	aa0ccb851ec5f7f9b132581d9a5827e4
+# Source0-md5:	943b458d2384765d54859611fd389744
 Source1:	Mesa-%{_snap}.tar.bz2
-# Source1-md5:	7674d2c603b5834259e4e5a820cefd5b
+# Source1-md5:	62aa25d6656902cfc0f485e1b7950c1d
 Patch0:		%{name}-slang-library-noise.patch
 URL:		http://www.freedesktop.org/wiki/Software/Xgl
 # for glx headers
