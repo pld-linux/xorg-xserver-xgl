@@ -23,30 +23,22 @@ BuildRequires:	ncurses-devel
 BuildRequires:	pam-devel
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig >= 1:0.19
-BuildRequires:	xorg-lib-libX11-devel
-BuildRequires:	xorg-lib-libXau-devel
 BuildRequires:	xorg-lib-libXaw-devel
-BuildRequires:	xorg-lib-libXdmcp-devel
-BuildRequires:	xorg-lib-libXext-devel
 BuildRequires:	xorg-lib-libXfont-devel
 BuildRequires:	xorg-lib-libXi-devel
 BuildRequires:	xorg-lib-libXrender-devel
 BuildRequires:	xorg-lib-libXres-devel
 BuildRequires:	xorg-lib-libXt-devel >= 1.0.0
 BuildRequires:	xorg-lib-libXtst-devel
-BuildRequires:	xorg-lib-libXxf86dga-devel
 BuildRequires:	xorg-lib-libXxf86misc-devel
 BuildRequires:	xorg-lib-libXxf86vm-devel
-BuildRequires:	xorg-lib-libdmx-devel
 BuildRequires:	xorg-lib-libfontenc-devel
-BuildRequires:	xorg-lib-liblbxutil-devel
 BuildRequires:	xorg-lib-libxkbfile-devel
 BuildRequires:	xorg-lib-libxkbui-devel
 BuildRequires:	xorg-lib-xtrans-devel
 BuildRequires:	xorg-proto-bigreqsproto-devel
 BuildRequires:	xorg-proto-compositeproto-devel
 BuildRequires:	xorg-proto-damageproto-devel
-BuildRequires:	xorg-proto-dmxproto-devel
 BuildRequires:	xorg-proto-evieext-devel
 BuildRequires:	xorg-proto-fixesproto-devel
 BuildRequires:	xorg-proto-fontsproto-devel
