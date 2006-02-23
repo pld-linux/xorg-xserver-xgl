@@ -7,9 +7,9 @@ Release:	1
 License:	MIT
 Group:		X11/Servers
 Source0:	xserver-%{_snap}.tar.bz2
-# Source0-md5:	943b458d2384765d54859611fd389744
+# Source0-md5:	c153886122d2450a8de00818ed6a6988
 Source1:	Mesa-%{_snap}.tar.bz2
-# Source1-md5:	62aa25d6656902cfc0f485e1b7950c1d
+# Source1-md5:	da25dda1b4c81dd8acb91e512684e082
 Patch0:		Mesa-indirect-fbo.patch
 URL:		http://www.freedesktop.org/wiki/Software/Xgl
 # for glx headers
