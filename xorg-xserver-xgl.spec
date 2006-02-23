@@ -1,22 +1,23 @@
 Summary:	Xgl X server
 Summary(pl):	Serwer X Xgl
 Name:		xorg-xserver-xgl
-%define		_snap	20060220
+%define		_snap	20060223
 Version:	0.0.%{_snap}
-Release:	0.1
+Release:	1
 License:	MIT
 Group:		X11/Servers
 Source0:	xserver-%{_snap}.tar.bz2
 # Source0-md5:	943b458d2384765d54859611fd389744
 Source1:	Mesa-%{_snap}.tar.bz2
 # Source1-md5:	62aa25d6656902cfc0f485e1b7950c1d
-Patch0:		%{name}-slang-library-noise.patch
+Patch0:		Mesa-indirect-fbo.patch
 URL:		http://www.freedesktop.org/wiki/Software/Xgl
 # for glx headers
 BuildRequires:	Mesa-libGL-devel
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake
 BuildRequires:	cpp
+BuildRequires:	glitz >= 0.5.4
 BuildRequires:	libdrm-devel
 BuildRequires:	libtool
 BuildRequires:	ncurses-devel
@@ -42,7 +43,7 @@ BuildRequires:	xorg-proto-damageproto-devel
 BuildRequires:	xorg-proto-evieext-devel
 BuildRequires:	xorg-proto-fixesproto-devel
 BuildRequires:	xorg-proto-fontsproto-devel
-BuildRequires:	xorg-proto-glproto-devel >= 1.4.4
+BuildRequires:	xorg-proto-glproto-devel >= 1.4.5-2
 BuildRequires:	xorg-proto-printproto-devel
 BuildRequires:	xorg-proto-randrproto-devel
 BuildRequires:	xorg-proto-recordproto-devel
@@ -93,8 +94,8 @@ Ten pakiet zawiera serwer Xgl.
 
 %prep
 %setup -q -a1 -n xserver-%{_snap}
-cd xorg
-%patch0 -p1
+cd Mesa-%{_snap}
+%patch0 -p0
 
 %build
 cd xorg
