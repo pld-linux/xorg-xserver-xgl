@@ -1,0 +1,22 @@
+diff -u -r1.12 glxextensions.c
+--- src/glx/x11/glxextensions.c	7 Feb 2006 00:39:56 -0000	1.12
++++ src/glx/x11/glxextensions.c	22 Feb 2006 18:58:34 -0000
+@@ -183,6 +183,7 @@
+    { GL(EXT_texture_object),             VER(1,1), Y, N, N, N },
+    { GL(EXT_texture_rectangle),          VER(0,0), Y, N, N, N },
+    { GL(EXT_vertex_array),               VER(0,0), Y, N, N, N },
++   { GL(EXT_framebuffer_object),         VER(1,1), Y, N, N, N },
+    { GL(3DFX_texture_compression_FXT1),  VER(0,0), Y, N, N, N },
+    { GL(APPLE_packed_pixels),            VER(1,2), Y, N, N, N },
+    { GL(APPLE_ycbcr_422),                VER(0,0), Y, N, N, N },
+diff -u -r1.9 glxextensions.h
+--- src/glx/x11/glxextensions.h	7 Feb 2006 00:39:56 -0000	1.9
++++ src/glx/x11/glxextensions.h	22 Feb 2006 18:58:34 -0000
+@@ -142,6 +142,7 @@
+    GL_EXT_texture_mirror_clamp_bit,
+    GL_EXT_texture_object_bit,
+    GL_EXT_vertex_array_bit,
++   GL_EXT_framebuffer_object_bit,
+    GL_3DFX_texture_compression_FXT1_bit,
+    GL_APPLE_packed_pixels_bit,
+    GL_APPLE_ycbcr_422_bit,
