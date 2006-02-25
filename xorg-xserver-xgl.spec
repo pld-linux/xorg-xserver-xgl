@@ -1,9 +1,13 @@
+#
+# Conditional build:
+%bcond_without	libGL		# don't build mesa's libGL
+#
 Summary:	Xgl X server
 Summary(pl):	Serwer X Xgl
 Name:		xorg-xserver-xgl
 %define		_snap	20060223
 Version:	0.0.%{_snap}
-Release:	1
+Release:	2
 License:	MIT
 Group:		X11/Servers
 Source0:	xserver-%{_snap}.tar.bz2
@@ -92,6 +96,21 @@ graficznej. Do dzia³ania wymaga odpowiedniego sterownika.
 
 Ten pakiet zawiera serwer Xgl.
 
+%package libGL
+Summary:	OpenGL library used inside Xgl
+Summary(pl):	Biblioteka OpenGL u¿ywana wewn±trz Xgl
+Group:		X11/Servers
+Requires:	%{name} = %{version}-%{release}
+
+%description libGL
+OpenGL library used inside Xgl to allow rendering. You still need
+normal OpenGL library (like nvidia's or ati's) to run Xgl.
+
+%description libGL -l pl
+BIblioteka OpenGL u¿ywana wewn±trz Xgl w celu umo¿liwienia
+renderingu. Normalna biblioteka OpenGL (jak nvidii lub ati) jest
+w dalszym ci±gu potrzebna by uruchomiæ Xgl.
+
 %prep
 %setup -q -a1 -n xserver-%{_snap}
 cd Mesa-%{_snap}
@@ -120,6 +139,26 @@ cd xorg
 
 %{__make}
 
+# build libGL from mesa snap
+%if %{with libGL}
+cd ../Mesa-%{_snap}
+
+%ifarch %{ix86}
+targ=-x86
+%else
+targ=""
+%endif
+
+%{__make} linux${targ} \
+	CC="%{__cc}" \
+	CXX="%{__cxx}" \
+	OPT_FLAGS="%{rpmcflags} -fno-strict-aliasing" \
+	XLIB_DIR=%{_libdir} \
+	SRC_DIRS="glx/x11" \
+	PROGRAM_DIRS=
+
+%endif
+
 %install
 rm -rf $RPM_BUILD_ROOT
 
@@ -129,6 +168,16 @@ cd xorg
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{*,*/*}.{la,a}
 
+%if %{with libGL}
+install -d $RPM_BUILD_ROOT%{_libdir}/xgl
+
+cd ../Mesa-%{_snap}/lib
+
+install libGL.so.1.2 $RPM_BUILD_ROOT%{_libdir}/xgl
+ln -s libGL.so.1.2 $RPM_BUILD_ROOT%{_libdir}/xgl/libGL.so.1
+
+%endif
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -137,3 +186,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/Xgl
 %dir %{_libdir}/xorg/modules/xgl
 %attr(755,root,root) %{_libdir}/xorg/modules/xgl/lib*.so
+
+%files libGL
+%defattr(644,root,root,755)
+%dir %{_libdir}/xgl
+%attr(755,root,root) %{_libdir}/xgl/*
