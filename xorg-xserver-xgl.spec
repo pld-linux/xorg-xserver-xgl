@@ -5,23 +5,23 @@
 Summary:	Xgl X server
 Summary(pl):	Serwer X Xgl
 Name:		xorg-xserver-xgl
-%define		_snap	20060223
+%define		_mesasnap	20060311
+%define		_snap		20060311
 Version:	0.0.%{_snap}
-Release:	2
+Release:	1
 License:	MIT
 Group:		X11/Servers
 Source0:	xserver-%{_snap}.tar.bz2
-# Source0-md5:	c153886122d2450a8de00818ed6a6988
-Source1:	Mesa-%{_snap}.tar.bz2
-# Source1-md5:	da25dda1b4c81dd8acb91e512684e082
-Patch0:		Mesa-indirect-fbo.patch
+# Source0-md5:	752e9785ba628426faf0c7cf6ab23513
+Source1:	Mesa-%{_mesasnap}.tar.bz2
+# Source1-md5:	250419f910f196395b6ce6460040bb1c
 URL:		http://www.freedesktop.org/wiki/Software/Xgl
 # for glx headers
 BuildRequires:	Mesa-libGL-devel
 BuildRequires:	autoconf >= 2.57
 BuildRequires:	automake
 BuildRequires:	cpp
-BuildRequires:	glitz >= 0.5.4
+BuildRequires:	glitz-devel >= 0.5.4
 BuildRequires:	libdrm-devel
 BuildRequires:	libtool
 BuildRequires:	ncurses-devel
@@ -31,6 +31,7 @@ BuildRequires:	pkgconfig >= 1:0.19
 BuildRequires:	xorg-lib-libXaw-devel
 BuildRequires:	xorg-lib-libXfont-devel
 BuildRequires:	xorg-lib-libXi-devel
+BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
 BuildRequires:	xorg-lib-libXres-devel
 BuildRequires:	xorg-lib-libXt-devel >= 1.0.0
@@ -47,7 +48,7 @@ BuildRequires:	xorg-proto-damageproto-devel
 BuildRequires:	xorg-proto-evieext-devel
 BuildRequires:	xorg-proto-fixesproto-devel
 BuildRequires:	xorg-proto-fontsproto-devel
-BuildRequires:	xorg-proto-glproto-devel >= 1.4.5-2
+BuildRequires:	xorg-proto-glproto-devel >= 1.4.5-3
 BuildRequires:	xorg-proto-printproto-devel
 BuildRequires:	xorg-proto-randrproto-devel
 BuildRequires:	xorg-proto-recordproto-devel
@@ -78,10 +79,6 @@ Requires:	xorg-font-font-cursor-misc
 Requires:	xorg-font-font-misc-misc-base
 # for new app-defaults location
 Requires:	xorg-lib-libXt >= 1.0.0
-Obsoletes:	X11-Xserver
-Obsoletes:	X11-modules
-Obsoletes:	XFree86-Xserver
-Obsoletes:	XFree86-modules
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -113,8 +110,6 @@ w dalszym ci±gu potrzebna by uruchomiæ Xgl.
 
 %prep
 %setup -q -a1 -n xserver-%{_snap}
-cd Mesa-%{_snap}
-%patch0 -p0
 
 %build
 cd xorg
@@ -135,13 +130,13 @@ cd xorg
 	--disable-xvfb \
 	--disable-xnest \
 	--with-default-font-path="%{_fontsdir}/misc,%{_fontsdir}/TTF,%{_fontsdir}/OTF,%{_fontsdir}/Type1,%{_fontsdir}/CID,%{_fontsdir}/100dpi,%{_fontsdir}/75dpi" \
-	--with-mesa-source="`pwd`/../Mesa-%{_snap}"
+	--with-mesa-source="`pwd`/../Mesa-%{_mesasnap}"
 
 %{__make}
 
 # build libGL from mesa snap
 %if %{with libGL}
-cd ../Mesa-%{_snap}
+cd ../Mesa-%{_mesasnap}
 
 %ifarch %{ix86}
 targ=-x86
@@ -171,7 +166,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{*,*/*}.{la,a}
 %if %{with libGL}
 install -d $RPM_BUILD_ROOT%{_libdir}/xgl
 
-cd ../Mesa-%{_snap}/lib
+cd ../Mesa-%{_mesasnap}/lib
 
 install libGL.so.1.2 $RPM_BUILD_ROOT%{_libdir}/xgl
 ln -s libGL.so.1.2 $RPM_BUILD_ROOT%{_libdir}/xgl/libGL.so.1
