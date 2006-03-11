@@ -175,7 +175,6 @@ cd ../Mesa-%{_snap}/lib
 
 install libGL.so.1.2 $RPM_BUILD_ROOT%{_libdir}/xgl
 ln -s libGL.so.1.2 $RPM_BUILD_ROOT%{_libdir}/xgl/libGL.so.1
-
 %endif
 
 %clean
@@ -187,7 +186,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/xorg/modules/xgl
 %attr(755,root,root) %{_libdir}/xorg/modules/xgl/lib*.so
 
+%if %{with libGL}
 %files libGL
 %defattr(644,root,root,755)
 %dir %{_libdir}/xgl
 %attr(755,root,root) %{_libdir}/xgl/*
+%endif
