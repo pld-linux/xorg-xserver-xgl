@@ -1,6 +1,4 @@
 #
-# TODO
-# - check if it really requires normaln xserver to run
 # Conditional build:
 %bcond_without	libGL		# don't build mesa's libGL
 #
@@ -81,12 +79,6 @@ Requires:	xorg-font-font-cursor-misc
 Requires:	xorg-font-font-misc-misc-base
 # for new app-defaults location
 Requires:	xorg-lib-libXt >= 1.0.0
-Requires:	xorg-lib-libXfont
-Requires:	xorg-lib-libXrender
-Requires:	xorg-lib-libXrandr
-Requires:	xorg-lib-libXxf86vm
-#Is this right?
-Requires:	xorg-xserver-server
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
