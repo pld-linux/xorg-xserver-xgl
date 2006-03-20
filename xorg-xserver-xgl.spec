@@ -6,17 +6,16 @@ Summary:	Xgl X server
 Summary(pl):	Serwer X Xgl
 Name:		xorg-xserver-xgl
 %define		_mesasnap	20060318
-%define		_snap		20060318
+%define		_snap		20060320
 Version:	0.0.%{_snap}
 Release:	1
 License:	MIT
 Group:		X11/Servers
 Source0:	xserver-%{_snap}.tar.bz2
-# Source0-md5:	adb9bbf4c644347397c3f0552610a911
+# Source0-md5:	f721d9ac67057d701ae650f7f476493a
 Source1:	Mesa-%{_mesasnap}.tar.bz2
 # Source1-md5:	918bfc4ebc62502174ba9a8b01cd6de5
-Patch0:		%{name}-slang.patch
-Patch1:		%{name}-mesa-dri-copy-sub-buffer-1.patch
+Patch0:		%{name}-mesa-dri-copy-sub-buffer-1.patch
 URL:		http://www.freedesktop.org/wiki/Software/Xgl
 # for glx headers
 BuildRequires:	Mesa-libGL-devel
@@ -112,10 +111,9 @@ w dalszym ci±gu potrzebna by uruchomiæ Xgl.
 
 %prep
 %setup -q -a1 -n xserver-%{_snap}
-%patch0 -p1
 
 cd Mesa-%{_mesasnap}
-%patch1 -p0
+%patch0 -p0
 
 %build
 cd xorg
