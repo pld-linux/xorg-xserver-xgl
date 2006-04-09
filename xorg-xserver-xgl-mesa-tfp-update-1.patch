@@ -1,0 +1,254 @@
+Index: include/GL/glx.h
+===================================================================
+RCS file: /cvs/mesa/Mesa/include/GL/glx.h,v
+retrieving revision 1.50
+diff -u -r1.50 glx.h
+--- include/GL/glx.h	31 Mar 2006 17:31:22 -0000	1.50
++++ include/GL/glx.h	9 Apr 2006 10:46:54 -0000
+@@ -425,7 +425,7 @@
+ 
+ /* XXX need enums/tokens! */
+ 
+-extern Bool glXBindTexImageEXT(Display *dpy, GLXDrawable drawable, int buffer);
++extern Bool glXBindTexImageEXT(Display *dpy, GLXDrawable drawable, int buffer, const int *attrib_list);
+ extern Bool glXReleaseTexImageEXT(Display *dpy, GLXDrawable drawable, int buffer);
+ 
+ #endif /* GLX_EXT_texture_from_pixmap */
+Index: include/GL/internal/glcore.h
+===================================================================
+RCS file: /cvs/mesa/Mesa/include/GL/internal/glcore.h,v
+retrieving revision 1.8
+diff -u -r1.8 glcore.h
+--- include/GL/internal/glcore.h	6 Jun 2004 02:20:20 -0000	1.8
++++ include/GL/internal/glcore.h	9 Apr 2006 10:46:54 -0000
+@@ -136,6 +136,13 @@
+     /* OML_swap_method */
+     GLint swapMethod;
+ 
++    /* EXT_texture_from_pixmap */
++    GLint bindToTextureRgb;
++    GLint bindToTextureRgba;
++    GLint bindToMipmapTexture;
++    GLint bindToTextureTargets;
++    GLint yInverted;
++
+     GLint screen;
+ } __GLcontextModes;
+ 
+@@ -166,6 +173,17 @@
+ #define GLX_PIXMAP_BIT                     0x00000002
+ #define GLX_PBUFFER_BIT                    0x00000004
+ 
++#define GLX_Y_INVERTED_EXT                  0x6009
++#define GLX_BIND_TO_TEXTURE_RGB_EXT         0x600A
++#define GLX_BIND_TO_TEXTURE_RGBA_EXT        0x600B
++#define GLX_BIND_TO_MIPMAP_TEXTURE_EXT      0x600C
++#define GLX_BIND_TO_TEXTURE_TARGETS_EXT     0x600D
++
++#define GLX_TEXTURE_1D_BIT_EXT             0x00000001
++#define GLX_TEXTURE_2D_BIT_EXT             0x00000002
++#define GLX_TEXTURE_RECTANGLE_BIT_EXT      0x00000004
++
++
+ /************************************************************************/
+ 
+ /*
+Index: src/glx/x11/glx_pbuffer.c
+===================================================================
+RCS file: /cvs/mesa/Mesa/src/glx/x11/glx_pbuffer.c,v
+retrieving revision 1.7
+diff -u -r1.7 glx_pbuffer.c
+--- src/glx/x11/glx_pbuffer.c	7 Apr 2006 00:05:50 -0000	1.7
++++ src/glx/x11/glx_pbuffer.c	9 Apr 2006 10:46:55 -0000
+@@ -287,6 +287,7 @@
+    xGLXCreateWindowReq * req;
+    CARD32 * data;
+    unsigned int i;
++   CARD8 opcode;
+ 
+    i = 0;
+    if (attrib_list) {
+@@ -294,11 +295,16 @@
+ 	   i++;
+    }
+ 
++    opcode = __glXSetupForCommand(dpy);
++    if (!opcode) {
++	return None;
++    }
++
+    LockDisplay(dpy);
+    GetReqExtra( GLXCreateWindow, 8 * i, req );
+    data = (CARD32 *) (req + 1);
+ 
+-   req->reqType = __glXSetupForCommand(dpy);
++   req->reqType = opcode;
+    req->glxCode = glxCode;
+    req->screen = (CARD32) fbconfig->screen;
+    req->fbconfig = fbconfig->fbconfigID;
+Index: src/glx/x11/glxcmds.c
+===================================================================
+RCS file: /cvs/mesa/Mesa/src/glx/x11/glxcmds.c,v
+retrieving revision 1.14
+diff -u -r1.14 glxcmds.c
+--- src/glx/x11/glxcmds.c	31 Mar 2006 15:48:04 -0000	1.14
++++ src/glx/x11/glxcmds.c	9 Apr 2006 10:46:56 -0000
+@@ -2643,17 +2643,27 @@
+ 
+ PUBLIC Bool glXBindTexImageEXT(Display *dpy,
+ 			       GLXDrawable drawable,
+-			       int buffer)
++			       int buffer,
++ 			       const int *attrib_list)
+ {
+     xGLXVendorPrivateReq *req;
+     GLXContext gc = __glXGetCurrentContext();
+     CARD32 *drawable_ptr;
+     INT32 *buffer_ptr;
++    CARD32 *num_attrib_ptr;
++    CARD32 *attrib_ptr;
+     CARD8 opcode;
++    unsigned int i;
+ 
+     if (gc == NULL)
+ 	return False;
+ 
++    i = 0;
++    if (attrib_list) {
++ 	while (attrib_list[i * 2] != None)
++ 	    i++;
++    }
++ 
+ #ifdef GLX_DIRECT_RENDERING
+     if (gc->isDirect)
+ 	return False;
+@@ -2664,7 +2674,7 @@
+ 	return False;
+ 
+     LockDisplay(dpy);
+-    GetReqExtra(GLXVendorPrivate, sizeof(CARD32)+sizeof(INT32),req);
++    GetReqExtra(GLXVendorPrivate, 12 + 8 * i,req);
+     req->reqType = opcode;
+     req->glxCode = X_GLXVendorPrivate;
+     req->vendorCode = X_GLXvop_BindTexImageEXT;
+@@ -2672,9 +2682,22 @@
+ 
+     drawable_ptr = (CARD32 *) (req + 1);
+     buffer_ptr = (INT32 *) (drawable_ptr + 1);
++    num_attrib_ptr = (CARD32 *) (buffer_ptr + 1);
++    attrib_ptr = (CARD32 *) (num_attrib_ptr + 1);
+ 
+     *drawable_ptr = drawable;
+     *buffer_ptr = buffer;
++    *num_attrib_ptr = (CARD32) i;
++
++    i = 0;
++    if (attrib_list) {
++ 	while (attrib_list[i * 2] != None)
++ 	{
++ 	    *attrib_ptr++ = (CARD32) attrib_list[i * 2 + 0];
++ 	    *attrib_ptr++ = (CARD32) attrib_list[i * 2 + 1];
++ 	    i++;
++ 	}
++    }
+ 
+     UnlockDisplay(dpy);
+     SyncHandle();
+Index: src/glx/x11/glxext.c
+===================================================================
+RCS file: /cvs/mesa/Mesa/src/glx/x11/glxext.c,v
+retrieving revision 1.20
+diff -u -r1.20 glxext.c
+--- src/glx/x11/glxext.c	3 Apr 2006 00:00:53 -0000	1.20
++++ src/glx/x11/glxext.c	9 Apr 2006 10:46:56 -0000
+@@ -595,6 +595,21 @@
+ 	  case GLX_SAMPLES_SGIS:
+ 	    config->samples = *bp++;
+ 	    break;
++	case GLX_BIND_TO_TEXTURE_RGB_EXT:
++	    config->bindToTextureRgb = *bp++;
++	    break;
++	case GLX_BIND_TO_TEXTURE_RGBA_EXT:
++	    config->bindToTextureRgba = *bp++;
++	    break;
++	case GLX_BIND_TO_MIPMAP_TEXTURE_EXT:
++	    config->bindToMipmapTexture = *bp++;
++	    break;
++	case GLX_BIND_TO_TEXTURE_TARGETS_EXT:
++	    config->bindToTextureTargets = *bp++;
++	    break;
++	case GLX_Y_INVERTED_EXT:
++	    config->yInverted = *bp++;
++	    break;
+ 	  case None:
+ 	    i = count;
+ 	    break;
+Index: src/mesa/drivers/dri/common/glcontextmodes.c
+===================================================================
+RCS file: /cvs/mesa/Mesa/src/mesa/drivers/dri/common/glcontextmodes.c,v
+retrieving revision 1.12
+diff -u -r1.12 glcontextmodes.c
+--- src/mesa/drivers/dri/common/glcontextmodes.c	3 Apr 2006 00:18:03 -0000	1.12
++++ src/mesa/drivers/dri/common/glcontextmodes.c	9 Apr 2006 10:46:56 -0000
+@@ -182,6 +182,15 @@
+     mode->transparentIndex = config->transparentIndex;
+ 
+     mode->swapMethod = GLX_SWAP_UNDEFINED_OML;
++
++    mode->bindToTextureRgb = (mode->rgbMode) ? GL_TRUE : GL_FALSE;
++    mode->bindToTextureRgba = (mode->rgbMode && mode->alphaBits) ?
++	GL_TRUE : GL_FALSE;
++    mode->bindToMipmapTexture = mode->rgbMode ? GL_TRUE : GL_FALSE;
++    mode->bindToTextureTargets = mode->rgbMode ?
++	GLX_TEXTURE_1D_BIT_EXT | GLX_TEXTURE_2D_BIT_EXT |
++	GLX_TEXTURE_RECTANGLE_BIT_EXT : 0;
++    mode->yInverted = GL_FALSE;
+ }
+ 
+ 
+@@ -313,6 +322,21 @@
+       case GLX_SAMPLES_SGIS:
+ 	*value_return = mode->samples;
+ 	return 0;
++      case GLX_BIND_TO_TEXTURE_RGB_EXT:
++	*value_return = mode->bindToTextureRgb;
++	return 0;
++      case GLX_BIND_TO_TEXTURE_RGBA_EXT:
++	*value_return = mode->bindToTextureRgba;
++	return 0;
++      case GLX_BIND_TO_MIPMAP_TEXTURE_EXT:
++	*value_return = mode->bindToMipmapTexture;
++	return 0;
++      case GLX_BIND_TO_TEXTURE_TARGETS_EXT:
++	*value_return = mode->bindToTextureTargets;
++	return 0;
++      case GLX_Y_INVERTED_EXT:
++	*value_return = mode->yInverted;
++	return 0;
+ 
+       /* Applications are NOT allowed to query GLX_VISUAL_SELECT_GROUP_SGIX.
+        * It is ONLY for communication between the GLX client and the GLX
+@@ -383,6 +407,11 @@
+       (*next)->xRenderable = GLX_DONT_CARE;
+       (*next)->fbconfigID = GLX_DONT_CARE;
+       (*next)->swapMethod = GLX_SWAP_UNDEFINED_OML;
++      (*next)->bindToTextureRgb = GLX_DONT_CARE;
++      (*next)->bindToTextureRgba = GLX_DONT_CARE;
++      (*next)->bindToMipmapTexture = GLX_DONT_CARE;
++      (*next)->bindToTextureTargets = 0;
++      (*next)->yInverted = GLX_DONT_CARE;
+ 
+       next = & ((*next)->next);
+    }
+@@ -495,5 +524,10 @@
+ 	    (a->maxPbufferPixels == b->maxPbufferPixels) &&
+ 	    (a->optimalPbufferWidth == b->optimalPbufferWidth) &&
+ 	    (a->optimalPbufferHeight == b->optimalPbufferHeight) &&
+-	    (a->swapMethod == b->swapMethod) );
++	    (a->swapMethod == b->swapMethod) &&
++	    (a->bindToTextureRgb == b->bindToTextureRgb) &&
++	    (a->bindToTextureRgba == b->bindToTextureRgba) &&
++	    (a->bindToMipmapTexture == b->bindToMipmapTexture) &&
++	    (a->bindToTextureTargets == a->bindToTextureTargets) &&
++	    (a->yInverted == b->yInverted) );
+ }
