@@ -8,7 +8,7 @@ Name:		xorg-xserver-xgl
 %define		_mesasnap	20060711
 %define		_snap		20060711
 Version:	0.0.%{_snap}
-Release:	1
+Release:	2
 License:	MIT
 Group:		X11/Servers
 Source0:	xserver-%{_snap}.tar.bz2
@@ -112,7 +112,7 @@ w dalszym ci±gu potrzebna by uruchomiæ Xgl.
 %prep
 %setup -q -a1 -n xserver-%{_snap}
 
-cd Mesa-%{_mesasnap}
+#cd Mesa-%{_mesasnap}
 
 %build
 cd xorg
@@ -135,7 +135,9 @@ cd xorg
 	--with-default-font-path="%{_fontsdir}/misc,%{_fontsdir}/TTF,%{_fontsdir}/OTF,%{_fontsdir}/Type1,%{_fontsdir}/CID,%{_fontsdir}/100dpi,%{_fontsdir}/75dpi" \
 	--with-mesa-source="`pwd`/../Mesa-%{_mesasnap}"
 
-%{__make}
+cp ../Mesa-%{_mesasnap}/src/mesa/main/arrayobj.? ./GL/mesa/main/
+
+%{__make} -j10
 
 # build libGL from mesa snap
 %if %{with libGL}
