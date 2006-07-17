@@ -137,7 +137,7 @@ cd xorg
 
 cp ../Mesa-%{_mesasnap}/src/mesa/main/arrayobj.? ./GL/mesa/main/
 
-%{__make} -j10
+%{__make}
 
 # build libGL from mesa snap
 %if %{with libGL}
