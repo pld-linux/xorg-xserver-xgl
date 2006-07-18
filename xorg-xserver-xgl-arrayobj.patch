@@ -1,0 +1,23 @@
+diff -ruN xserver-20060711./xorg/GL/symlink-mesa.sh xserver-20060711/xorg/GL/symlink-mesa.sh
+--- xserver-20060711./xorg/GL/symlink-mesa.sh	2006-05-23 10:59:18.000000000 +0200
++++ xserver-20060711/xorg/GL/symlink-mesa.sh	2006-07-18 11:07:04.357453500 +0200
+@@ -90,6 +90,8 @@
+     action api_validate.h
+     action attrib.c
+     action attrib.h
++    action arrayobj.c
++    action arrayobj.h
+     action bitset.h
+     action blend.c
+     action blend.h
+diff -ruN xserver-20060711./xorg/GL/mesa/main/Makefile.am xserver-20060711/xorg/GL/mesa/main/Makefile.am
+--- xserver-20060711./xorg/GL/mesa/main/Makefile.am	2006-05-23 10:59:18.000000000 +0200
++++ xserver-20060711/xorg/GL/mesa/main/Makefile.am	2006-07-18 11:26:45.503270500 +0200
+@@ -25,6 +25,7 @@
+                     api_noop.c \
+                     api_validate.c \
+                     attrib.c \
++		    arrayobj.c \
+                     blend.c \
+                     bufferobj.c \
+                     buffers.c \
