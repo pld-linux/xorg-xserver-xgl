@@ -8,13 +8,14 @@ Name:		xorg-xserver-xgl
 %define		_mesasnap	20060711
 %define		_snap		20060711
 Version:	0.0.%{_snap}
-Release:	2
+Release:	3
 License:	MIT
 Group:		X11/Servers
 Source0:	xserver-%{_snap}.tar.bz2
 # Source0-md5:	9b6322d34993f2928bf326877246f680
 Source1:	Mesa-%{_mesasnap}.tar.gz
 # Source1-md5:	dc3603c48142a3245d0cb2cabb6a1236
+Patch0:		%{name}-arrayobj.patch
 URL:		http://www.freedesktop.org/wiki/Software/Xgl
 # for glx headers
 BuildRequires:	Mesa-libGL-devel
@@ -111,6 +112,7 @@ w dalszym ci±gu potrzebna by uruchomiæ Xgl.
 
 %prep
 %setup -q -a1 -n xserver-%{_snap}
+%patch0 -p1
 
 #cd Mesa-%{_mesasnap}
 
@@ -134,8 +136,6 @@ cd xorg
 	--disable-xnest \
 	--with-default-font-path="%{_fontsdir}/misc,%{_fontsdir}/TTF,%{_fontsdir}/OTF,%{_fontsdir}/Type1,%{_fontsdir}/CID,%{_fontsdir}/100dpi,%{_fontsdir}/75dpi" \
 	--with-mesa-source="`pwd`/../Mesa-%{_mesasnap}"
-
-cp ../Mesa-%{_mesasnap}/src/mesa/main/arrayobj.? ./GL/mesa/main/
 
 %{__make}
 
