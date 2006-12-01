@@ -1,20 +1,20 @@
 #
 # Conditional build:
-%bcond_without	libGL		# don't build mesa's libGL
+%bcond_with	libGL		# build mesa's libGL
 #
 Summary:	Xgl X server
 Summary(pl):	Serwer X Xgl
 Name:		xorg-xserver-xgl
-%define		_mesasnap	20060711
-%define		_snap		20060711
+%define		_mesasnap	20061103
+%define		_snap		20061108
 Version:	0.0.%{_snap}
-Release:	3
+Release:	1
 License:	MIT
 Group:		X11/Servers
-Source0:	xserver-%{_snap}.tar.bz2
-# Source0-md5:	9b6322d34993f2928bf326877246f680
+Source0:	xgl-%{_snap}.tar.bz2
+# Source0-md5:	c1790723d80c8c6510dc93c8e804f65a
 Source1:	Mesa-%{_mesasnap}.tar.gz
-# Source1-md5:	dc3603c48142a3245d0cb2cabb6a1236
+# Source1-md5:	1ef25af748d4c2a808ee4521a75c2579
 Patch0:		%{name}-arrayobj.patch
 URL:		http://www.freedesktop.org/wiki/Software/Xgl
 # for glx headers
@@ -111,13 +111,12 @@ renderingu. Normalna biblioteka OpenGL (jak nvidii lub ati) jest
 w dalszym ci±gu potrzebna by uruchomiæ Xgl.
 
 %prep
-%setup -q -a1 -n xserver-%{_snap}
-%patch0 -p1
+%setup -q -a1 -n xgl
+#%%patch0 -p2
 
 #cd Mesa-%{_mesasnap}
 
 %build
-cd xorg
 %{__libtoolize}
 %{__aclocal}
 %{__autoconf}
@@ -129,19 +128,20 @@ cd xorg
 	--enable-xkb \
 	--enable-xgl \
 	--enable-xglx \
+	--disable-aiglx \
 	--disable-xorg \
 	--disable-xprint \
 	--disable-dmx \
 	--disable-xvfb \
 	--disable-xnest \
 	--with-default-font-path="%{_fontsdir}/misc,%{_fontsdir}/TTF,%{_fontsdir}/OTF,%{_fontsdir}/Type1,%{_fontsdir}/CID,%{_fontsdir}/100dpi,%{_fontsdir}/75dpi" \
-	--with-mesa-source="`pwd`/../Mesa-%{_mesasnap}"
+	--with-mesa-source="`pwd`/Mesa"
 
 %{__make}
 
 # build libGL from mesa snap
 %if %{with libGL}
-cd ../Mesa-%{_mesasnap}
+cd Mesa
 
 %ifarch %{ix86}
 targ=-x86
@@ -162,7 +162,6 @@ targ=""
 %install
 rm -rf $RPM_BUILD_ROOT
 
-cd xorg
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
@@ -171,7 +170,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{*,*/*}.{la,a}
 %if %{with libGL}
 install -d $RPM_BUILD_ROOT%{_libdir}/xgl
 
-cd ../Mesa-%{_mesasnap}/lib
+cd Mesa/lib
 
 install libGL.so.1.2 $RPM_BUILD_ROOT%{_libdir}/xgl
 ln -s libGL.so.1.2 $RPM_BUILD_ROOT%{_libdir}/xgl/libGL.so.1
