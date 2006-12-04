@@ -74,7 +74,6 @@ Requires:	xorg-app-rgb >= 0.99.3
 Requires:	xorg-app-xkbcomp
 # just for %{_includedir}/bitmaps dir
 Requires:	xorg-data-xbitmaps
-Requires:	xorg-data-xkbdata
 # xserver requires default fixed and cursosr fonts.
 Requires:	xorg-font-font-alias
 Requires:	xorg-font-font-cursor-misc
