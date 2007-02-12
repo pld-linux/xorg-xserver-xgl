@@ -3,7 +3,7 @@
 %bcond_with	libGL		# build mesa's libGL
 #
 Summary:	Xgl X server
-Summary(pl):	Serwer X Xgl
+Summary(pl.UTF-8):   Serwer X Xgl
 Name:		xorg-xserver-xgl
 %define		_mesasnap	20061103
 %define		_snap		20061108
@@ -88,15 +88,15 @@ It requires proper driver for your display hardware.
 
 This package contains Xgl server.
 
-%description -l pl
-Serwer Xorg to podstawowy serwer X wy¶wietlaj±cy obraz na karcie
-graficznej. Do dzia³ania wymaga odpowiedniego sterownika.
+%description -l pl.UTF-8
+Serwer Xorg to podstawowy serwer X wyÅ›wietlajÄ…cy obraz na karcie
+graficznej. Do dziaÅ‚ania wymaga odpowiedniego sterownika.
 
 Ten pakiet zawiera serwer Xgl.
 
 %package libGL
 Summary:	OpenGL library used inside Xgl
-Summary(pl):	Biblioteka OpenGL u¿ywana wewn±trz Xgl
+Summary(pl.UTF-8):   Biblioteka OpenGL uÅ¼ywana wewnÄ…trz Xgl
 Group:		X11/Servers
 Requires:	%{name} = %{version}-%{release}
 
@@ -104,10 +104,10 @@ Requires:	%{name} = %{version}-%{release}
 OpenGL library used inside Xgl to allow rendering. You still need
 normal OpenGL library (like nvidia's or ati's) to run Xgl.
 
-%description libGL -l pl
-BIblioteka OpenGL u¿ywana wewn±trz Xgl w celu umo¿liwienia
+%description libGL -l pl.UTF-8
+BIblioteka OpenGL uÅ¼ywana wewnÄ…trz Xgl w celu umoÅ¼liwienia
 renderingu. Normalna biblioteka OpenGL (jak nvidii lub ati) jest
-w dalszym ci±gu potrzebna by uruchomiæ Xgl.
+w dalszym ciÄ…gu potrzebna by uruchomiÄ‡ Xgl.
 
 %prep
 %setup -q -a1 -n xgl
