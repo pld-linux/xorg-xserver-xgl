@@ -3,7 +3,7 @@
 %bcond_with	libGL		# build mesa's libGL
 #
 Summary:	Xgl X server
-Summary(pl.UTF-8):   Serwer X Xgl
+Summary(pl.UTF-8):	Serwer X Xgl
 Name:		xorg-xserver-xgl
 %define		_mesasnap	20061103
 %define		_snap		20061108
@@ -96,7 +96,7 @@ Ten pakiet zawiera serwer Xgl.
 
 %package libGL
 Summary:	OpenGL library used inside Xgl
-Summary(pl.UTF-8):   Biblioteka OpenGL używana wewnątrz Xgl
+Summary(pl.UTF-8):	Biblioteka OpenGL używana wewnątrz Xgl
 Group:		X11/Servers
 Requires:	%{name} = %{version}-%{release}
 
