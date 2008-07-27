@@ -8,7 +8,7 @@ Name:		xorg-xserver-xgl
 %define		_mesasnap	20061103
 %define		_snap		20061108
 Version:	0.0.%{_snap}
-Release:	1
+Release:	2
 License:	MIT
 Group:		X11/Servers
 Source0:	xgl-%{_snap}.tar.bz2
